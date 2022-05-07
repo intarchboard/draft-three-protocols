@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+  <!ENTITY RFC2119 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+  <!ENTITY RFC2629 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2629.xml">
+  <!ENTITY RFC3552 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3552.xml">
+  <!ENTITY I-D.narten-iana-considerations-rfc2434bis SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.narten-iana-considerations-rfc2434bis.xml">
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc category="info" docName="draft-ietf-xml2rfc-template-05" ipr="full3978">
+
+<!-- front matter -->
+
+<front>
+
+<title abbrev="Abbreviated Title">Internet of Three Protocols</title>
+
+<author initials='R.' surname='White' fullname='Russ White'>
+<organization>Juniper Networks</organization>
+<address>
+ <email>russ@riw.us</email>
+</address>
+</author>
+
+<author initials='J.' surname='Mauch' fullname='Jared Mauch'>
+<organization>xxx</organization>
+<address>
+ <email>xxx</email>
+</address>
+</author>
+
+<date month="March" year="2022" />
+
+<area>XXX</area>
+
+<workgroup>XXX</workgroup>
+
+<keyword>xxx</keyword>
+
+<abstract>
+  <t>Concerns over the centralization of the Internet have been raised in various forums over the last several years. One component of this centralization, both a cause and an effect, is the reduction in the diversity of the protocols used to make the Internet "work," including data transport, providing reachability, and naming. In each of these areas, there were once many different protocols serving different purposes. More recently, however, three protocols have come to dominate these three functions: HTTPS, BGP, and DNS.</t>
+
+  <t>This draft exmaines the importance and causes of this narrowing, and then offers some observations on the results of this narrowing and some specific suggestions to counteract this trend.</t>
+</abstract>
+
+</front>
+<!-- end of front matter -->
+
+<!-- middle  -->
+<middle>
+
+<!-- introduction -->
+<section title="Introduction" toc="default">
+
+ <t>One of the guiding principles of designing a protocol in the original Internet community was "the protocol is not complete when everything possible has been added, but rather when everything possible has been removed." Keeping protocols simple is important for many different reasons, including:</t>
+
+ <t>
+  <list style="symbols">
+   <t>Separating failure domains. If each protocol serves a single purpose, a failure of that particular function can be easily traced to a single protocol. Failures in a single protocol will not impact the operation of other parts of the system.</t>
+   <t>Increasing observability. If each protocol transports a single type of traffic, network operators can easily observe and manage each kind of traffic independently. Operators can route different kinds of traffic along different paths, match the quality of service with application requirements, and more quickly find correlations between application problems and network conditions.</t>
+   <t>Increasing security. It is easier to understand the attack surface of protocols used for a single purpose, and hence to protect these protocols. Implementations of single-purpose protocols also tend to have fewer lines of code, fewer internal interaction surfaces, etc.--they tend to be simpler, and easier to verify for completeness and correctness.</t>
+   <t>Increasing scale. Simplicity scales, complexity fails. Single-purpose protocols are generally simpler.</t>
+   <t>Separating complexity from complexity. While deploying one protocol for each purpose increases global complexity, it reduces the complexity of each deployed protocol (local complexity is reduced). The early Internet tended to lean towards local simplicity and global complexity.</t>
+  </list>
+ </t>
+
+ <t>In the more recent years, however, the Internet community has tended to favor global simplicity over local simplicity, using a small set of protocols for "almost everything." These "kitchen sink" protocols tend to be extremely complex. Implementations of these protocols run into hundreds of thousands of lines of code, separated into many independent, interacting modules.</t>
+
+<!-- contributors -->
+<section title="Contributors" toc="default">
+
+ <t>The following people contributed to this draft: ... </t>
+
+</section>
+<!-- end of contributors -->
+
+<!-- requirements language -->
+<section title="Requirements Language" toc="default">
+ <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target="RFC2119">RFC 2119</xref>.</t>
+</section>
+<!-- end of requirements language -->
+
+</section>
+<!-- end of introduction -->
+
+<!-- narrowing protocols -->
+<section title="Observations on the Narrowing of Protocols" toc="default">
+
+<t>While the Internet remains richly populated with protocols at the moment, the trend is towards using three protocols for "everything." The community is designing few new protocols, choosing to adapt existing protocols for new use cases rather than designing a new protocol. Three specific instances are noted here, leading to the title given to this draft, "the internet of three protocols." These protocols are HTTPS, DNS, and BGP.</t>
+
+<!-- HTTPS -->
+<section title="HTTPS" toc="default">
+
+ <t>Originally, each type of data or application was paired with a protocol designed for that purpose. For instance:</t>
+
+ <t>
+  <list style="symbols">
+   <t>TELNET/SSH for carrying console and control text data between two hosts</t>
+   <t>SMTP for carrying email, later extended to carry attachments, between hosts</t>
+   <t>FTP/SFTP for carrying files between hosts</t>
+   <t>HTTP/HTTPS for carrying HTML formatted files between hosts; later extended to carry scripts, images, video, etc.</t>
+   <t>DNS for carrying domain requests between hosts and recursive/caching DNS servers</t>
+   <t>... need more examples here ...</t>
+  </list>
+ </t>
+
+ <t>HTTPS has encroached on all of these protocols, and the traffic types and purposes described are increasingly being pulled into HTTPS streams. SMTP and DNS are notable examples of this phenomena, where most email is now handled through web interfaces, and DoH is largely taking over communications between hosts and DNS servers.</t>
+
+</section>
+<!-- end of https -->
+
+<!-- DNS -->
+<section title="DNS" toc="default">
+
+<t>DNS has not so much replaced other protocols as it has been extended to support many different complex use cases, many of which may have been better solved with some new protocol.</t>
+
+<!-- Examples of DNS usage include load balancing, ... ??? I'm not certain what all to put here -->
+
+</section>
+<!-- end of dns -->
+
+<!-- BGP -->
+<section title="BGP" toc="default">
+
+ <t>BGP was originally designed to interconnect multiple routing domains, where each domain is an independently operating network with their own policies, operations staff, business goals, etc. In other words, BGP was designed to build internetworks out of networks. As such, BGP was designed as an overlay, providing edge-to-edge reachability for external routing information; a provider would not normally carry internal infrastructure routes in BGP. Over time, BGP was extended to carry virtual topologies and traffic engineering/steering information, allowing operators to build tunneled overlay topologies across their network at scale.</t>
+
+ <t>BGP has been (and is currently being) extended in two specific ways: to enable BGP's use as an IGP carrying infrastructure reachability, and to use BGP as a general solution to deploying virtual overlay networks. For instance:</t>
+
+ <t>
+  <list style="symbols">
+   <t>Autodiscovery of BGP peers and using link local peering to reduce the configuration of BGP in a data center fabric</t>
+   <t>Carrying link state information in BGP (and calculating loop-free paths using link-state methods)</t>
+   <t>Carrying layer 2 reachability information, including load balancing, broadcast and unknowns, etc., for data center fabrics</t>
+   <t>... need more examples here ...</t>
+  </list>
+ </t>
+
+ <t>Each extension to BGP increases the protocol's complexity, increasing the size of the code base, the protocol's attack surface, and the ways in which a protocol misconfiguration can impact operations. For instance:</t>
+
+ <t>
+  <list style="symbols">
+   <t>Autodiscovering and configuration of peers is desirable in data center fabrics, and undesirable in interdomain routing</t>
+   <t>The average BGP implementation is well over 200,000 lines of code, precluding any single individual's ability to understand and work on the entire code base</t>
+   <t>... need more examples here ... this might be too mixed of a list?</t>
+  </list>
+ </t>
+
+</section>
+<!-- end of bgp -->
+
+</section>
+<!-- end of narrowing protocols -->
+
+<!-- reasons for narrowing -->
+<section title="Observations on the Reasons for this Narrowing" toc="default">
+
+<t>This section considers a few (not necessarily all) reasons believed to increase the reliance on a smaller set of protocols, rather than the design and deployment of new protocols.</t>
+
+ <!-- increasing complexity -->
+ <section title="Increasing Complexity" toc="default">
+
+ <t>As each protocol becomes more complex, it forms a community. This community, in turn, tends to see the solution to every possible problem in terms of the protocol the community shares expertise in. The protocol becomes a kind of "set of glasses" through which all problems are viewed; alternatives to using the "community's protocol" are not sought out. Much like a social network, if the community around a protocol becomes large enough, it will "consume" the time, energy, and expertise once spread across multiple protocols. As the protocol is used to solve more problems, the community gains deeper experience and knowledge, forming a self-reinforcing loop around increasing complexity, more deeply defined community boundaries, and deeper expertise.</t>
+
+ </section>
+ <!-- end of increasing complexity -->
+
+ <!-- difficulty of deploying new protocols -->
+ <section title="Difficulty of Deploying New Protocols" toc="default">
+
+ <t>Developing a new protocol requires many years of work; ten years is not an unreasonable amount of time to move a protocol from inception to initial deployment. Once a protocol has been developed, deploying the new protocol takes a long period of time. For instance, IPv6 was first available in the Linux kernel in 1996. As of this writing, IPv6 deplooyment has been actively encouraged for 26 years; less than 50% of all networks are actively running IPv6; and there are no known IPv6-only networks active.</t>
+
+ <t>Long development and deployment times encourage the use of existing protocols, where possible, to modify existing protocols. Problems need to be solved now, but protocol development and deployment can take years.</t>
+
+ </section>
+ <!-- end of difficulty in deploying new protocols -->
+
+ <!-- increasing centralization -->
+ <section title="Increasing Internet Centralization" toc="default">
+
+ <t>The origins of the Internet were strongly decentralized; there were many sources, many destinations, and lots of broad interconnection. The current Internet is more centralized, with high percentages of traffic sourced from and destined to a few services. These services, in turn, pull large amounts of traffic off the "Internet proper," carrying it on private networks from the edge directly into the service.</t>
+
+ <t>These centralized services do not need, necessarily, to interoperate in the same way many different decentralized services to be effective. This tendency towards centralization, then, tends to draw protocol development into a narrower focus of solving problems for the larger services, and away from interoperation and broader-based efforts. Further, the growing centralization tends to gather information on protocol performance into private domains, reducing the amount of information protocol developers have to work from. Finally, this growing centralization tends to gather protocol expertise into small, strongly controlled communities.</t>
+
+ </section>
+ <!-- end of increasing centralization -->
+
+ <!-- global optimization -->
+ <section title="Balance of Global versus Local Optimization" toc="default">
+
+  <t>As networks have become more complex, network operators have sought out ways to reduce that complexity to a more managable level. One way network operators have attempted to manage complexity is to reduce the number of protocols they are deploying and managing. The protocol development community has often followed the desire for "simplicity through protocol reduction" by solving problems in existing protocols, rather than creating new protocols.</t>
+
+  <t>Driven to its extreme, it would seem this line of reasoning argues for a single protocol to solve "everything," including routing, naming, transport, etc. Tradeoffs are often ignored in the push towards a smaller number of protocols, however. To build scalable, flexible, systems, local and global complexity must be seen as a set of tradeoffs. Proper system design requires breaking complex problems down into a series of smaller, interacting problems, and building solutions for each problem. These solutions should be connected using clearly udnerstandable, shallow, and narrow interaction surfaces.</t>
+  
+ </section>
+ <!-- end of global optimization -->
+
+</section>
+<!-- end of reasons for narrowing -->
+
+<!-- observations on the results -->
+<section title="Observations on the Results of this Narrowing" toc="default">
+
+ <t>This draft does not claim extending protocols is bad (or unwise) in each individual case. The community should, however, be concerned about the impact of these extensions taking place at the expense of developing and deploying protocols for solving individual problems. Some of the reasons the community should be concerned are discussed in this section.</t>
+
+ <t>Increasing protocol complexity drives larger failure domains and attack surfaces, not only for the highly complex protocol, but also for the system in which the protocol is embedded. This is true even if every feature of a given protocol is not used; unused features still exist in the implementations deployed in the network.</t>
+
+ <t>Extremely complex protocols require hundreds of thousands of lines of code spread across many sub-modules to implement. These large implementions tend to require communities of developers; no-one in these communities tend to know "the entire code base." This exaberates the problems of larger failure domains and attack surfaces discussed above.</t>
+
+ <t>Increasing protocol complexity encouarges Internet centralization. As protocols become more complex, the set of engineers and/or operators who understand these protocols at the level required to deploy them at scale contracts. This smaller pool of engineers will tend to concentrate in a few larger organizations for two reasons: larger organizations have the resources to pay for and support deep talent, and engineers (like most all other people) tend to like working with like-minded people.</t>
+
+</section>
+<!-- end of results -->
+
+<!-- recommendations -->
+<section title="Recommendations for the Internet Community" toc="default">
+
+ <t>The immediate way to express recommendations resulting from these observations is "don't create complex protocols," or "use multiple protocols to solve multiple problems." Any such recommendation, however, is context and perception dependent. Instead, what is needed is concrete steps to encourage the Internet community to both understand the problems resulting from using a small set of protocols to address all use cases or problems, and to allow groups who manage the development of protocols to control the protocol's complexity. Several suggestions are made towards these ends.</t>
+
+ <!-- research -->
+ <section title="Encourage Research into Protocol Development and Deployment" toc="default">
+ 
+  <t>One way to encourage a broader set of protocols is encouraging research into why and how protocols require long periods of time to deploy. This may lead to some changes in the requirements for backward compatibility, for instance, or changing basic rules of protocol implementation (reference use it or lose it work here?). Clearly defined differentation between protocols requiring hardware changes and software-only changes need to be considered.</t>
+
+  <t>A second step might be encouraging a stronger ecosystem around developing and deploying experimental protocols. The largest risk to deploying an experimental protocol is the protocol may eventually be withdrawn from use, or fail to gain enough traction to receive continued community support. Ways of transition "out of" expiremental protocols, while reducing these risks, should be explored.</t>
+
+ </section>
+ <!-- end of research -->
+ 
+ <!-- scope control -->
+ <section title="Encourage Defined Protocol Scope" toc="default">
+
+  <t>The Internet community can be encouraged to place clear "caps" or "boundaries" on each protocol. Specifically, when an IETF working group begins developing (or extending) a protocol, specific bounds on the protocol can be written into the working group charter. Any extension of these bounds must be discussed and approved by the larger community, and in particular those who hold technical leadership and have a larger architectural view, before changes are undertaken.</t>
+
+  <t>A bound may be on the scope of the protocol, such as "designed to be deployed within one administration domain, region, etc." This is the concept of "local deployment," with the caveat that "local deployment" needs to be better defined and enforced in meaninful ways.</t>
+
+  <t>A bound may be on the set of problems the protocol is designed to solve. In many cases, a protocol will be developed to solve one problem. Extensions are then added to support more use cases, then a similar problem is observed in a different scope, and the protocol is extended to support the added scope. Thus the protocol "grows" via "walking," taking on new functionality to support new use cases within a given scope, then taking on new functionality to support new scopes with similar problems. There are no natural boundaries on this kind of protocol extension.</t>
+
+  <t>For instance, BGP was originally designed to support routing between networks in different administration domains (interdomain routing), particularly to carry "non-infrastructure" routing information within and between networks. Creating virtual topologies was eventually identified as one problem that needed to be solved in this space, so BGP was extended to support the creation and management of overlays. When virtualization became widely used on data center fabrics, protocol developers noticed that the overlay management problems in interdomain routing were similar to the overlay management problems in data fabrics, so BGP was extended to support virtual topologies in data centers. There is no apparent limit on the extensions that can be added to BGP to support virtually any routing problem.</t>
+
+  <t>The result is a protocol requiring hundreds of thousands of lines of code to implement, and which must be configured and managed in completely different ways in different environments. Saying "I understand BGP" is currently an almost meaningless statement because BGP has so many features, and is deployed in so many different situations, that very few people can understand every feature, how each one is used, and how to optimally use each one.</t>
+
+ </section>
+ <!-- end of scope control -->
+
+</section>
+<!-- end of recommendations -->
+
+
+</middle>
+<!-- end of middle -->
+
+
+  <back>
+
+
+    <!-- References split into informative and normative -->
+
+    <!-- There are 2 ways to insert reference entries from the citation libraries:
+     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
+     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
+        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+
+     Both are cited textually in the same manner: by using xref elements.
+     If you use the PI option, xml2rfc will, by default, try to find included files in the same
+     directory as the including file. You can also define the XML_LIBRARY environment variable
+     with a value containing a set of directories to search.  These can be either in the local
+     filing system or remote ones accessed by http (http://domain/dir/... ).-->
+
+    <references title="Normative References">
+      <!--?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"?-->
+      &RFC2119;
+
+      <reference anchor="min_ref">
+        <!-- the following is the minimum to make xml2rfc happy -->
+
+        <front>
+          <title>Minimal Reference</title>
+
+          <author initials="authInitials" surname="authSurName">
+            <organization></organization>
+          </author>
+
+          <date year="2006" />
+        </front>
+      </reference>
+    </references>
+
+    <references title="Informative References">
+      <!-- Here we use entities that we defined at the beginning. -->
+
+      &RFC2629;
+
+      &RFC3552;
+
+      &I-D.narten-iana-considerations-rfc2434bis;
+
+      <!-- A reference written by by an organization not a person. -->
+
+      <reference anchor="DOMINATION"
+                 target="http://www.example.com/dominator.html">
+        <front>
+          <title>Ultimate Plan for Taking Over the World</title>
+
+          <author>
+            <organization>Mad Dominators, Inc.</organization>
+          </author>
+
+          <date year="1984" />
+        </front>
+      </reference>
+    </references>
+
+    <section anchor="app-additional" title="Additional Stuff">
+      <t>This becomes an Appendix.</t>
+    </section>
+
+    <!-- Change Log
+
+v00 2006-03-15  EBD   Initial version
+
+v01 2006-04-03  EBD   Moved PI location back to position 1 -
+                      v3.1 of XMLmind is better with them at this location.
+v02 2007-03-07  AH    removed extraneous nested_list attribute,
+                      other minor corrections
+v03 2007-03-09  EBD   Added comments on null IANA sections and fixed heading capitalization.
+                      Modified comments around figure to reflect non-implementation of
+                      figure indent control.  Put in reference using anchor="DOMINATION".
+                      Fixed up the date specification comments to reflect current truth.
+v04 2007-03-09 AH     Major changes: shortened discussion of PIs,
+                      added discussion of rfc include.
+v05 2007-03-10 EBD    Added preamble to C program example to tell about ABNF and alternative 
+                      images. Removed meta-characters from comments (causes problems).  -->
+  </back>
+</rfc>
