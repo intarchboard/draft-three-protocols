@@ -250,40 +250,11 @@
 <!-- end of middle -->
 
 
-  <back>
-
-
-    <!-- References split into informative and normative -->
-
-    <!-- There are 2 ways to insert reference entries from the citation libraries:
-     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
-     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
-        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
-
-     Both are cited textually in the same manner: by using xref elements.
-     If you use the PI option, xml2rfc will, by default, try to find included files in the same
-     directory as the including file. You can also define the XML_LIBRARY environment variable
-     with a value containing a set of directories to search.  These can be either in the local
-     filing system or remote ones accessed by http (http://domain/dir/... ).-->
+<back>
 
     <references title="Normative References">
       <!--?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"?-->
       &RFC2119;
-
-      <reference anchor="min_ref">
-        <!-- the following is the minimum to make xml2rfc happy -->
-
-        <front>
-          <title>Minimal Reference</title>
-
-          <author initials="authInitials" surname="authSurName">
-            <organization></organization>
-          </author>
-
-          <date year="2006" />
-        </front>
-      </reference>
-    </references>
 
     <references title="Informative References">
       <!-- Here we use entities that we defined at the beginning. -->
@@ -294,41 +265,7 @@
 
       &I-D.narten-iana-considerations-rfc2434bis;
 
-      <!-- A reference written by by an organization not a person. -->
-
-      <reference anchor="DOMINATION"
-                 target="http://www.example.com/dominator.html">
-        <front>
-          <title>Ultimate Plan for Taking Over the World</title>
-
-          <author>
-            <organization>Mad Dominators, Inc.</organization>
-          </author>
-
-          <date year="1984" />
-        </front>
-      </reference>
     </references>
 
-    <section anchor="app-additional" title="Additional Stuff">
-      <t>This becomes an Appendix.</t>
-    </section>
-
-    <!-- Change Log
-
-v00 2006-03-15  EBD   Initial version
-
-v01 2006-04-03  EBD   Moved PI location back to position 1 -
-                      v3.1 of XMLmind is better with them at this location.
-v02 2007-03-07  AH    removed extraneous nested_list attribute,
-                      other minor corrections
-v03 2007-03-09  EBD   Added comments on null IANA sections and fixed heading capitalization.
-                      Modified comments around figure to reflect non-implementation of
-                      figure indent control.  Put in reference using anchor="DOMINATION".
-                      Fixed up the date specification comments to reflect current truth.
-v04 2007-03-09 AH     Major changes: shortened discussion of PIs,
-                      added discussion of rfc include.
-v05 2007-03-10 EBD    Added preamble to C program example to tell about ABNF and alternative 
-                      images. Removed meta-characters from comments (causes problems).  -->
-  </back>
+</back>
 </rfc>
