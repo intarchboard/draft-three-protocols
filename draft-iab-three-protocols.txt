@@ -1,0 +1,504 @@
+
+
+
+
+XXX                                                             R. White
+Internet-Draft                                          Juniper Networks
+Intended status: Informational                                  J. Mauch
+Expires: September 2, 2022                                           xxx
+                                                           March 1, 2022
+
+
+                      Internet of Three Protocols
+                      draft-iab-three-protocols-00
+
+Abstract
+
+   Concerns over the centralization of the Internet have been raised in
+   various forums over the last several years.  One component of this
+   centralization, both a cause and an effect, is the reduction in the
+   diversity of the protocols used to make the Internet "work,"
+   including data transport, providing reachability, and naming.  In
+   each of these areas, there were once many different protocols serving
+   different purposes.  More recently, however, three protocols have
+   come to dominate these three functions: HTTPS, BGP, and DNS.
+
+   This draft exmaines the importance and causes of this narrowing, and
+   then offers some observations on the results of this narrowing and
+   some specific suggestions to counteract this trend.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on September 2, 2022.
+
+Copyright Notice
+
+   Copyright (c) 2022 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 1]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Introduction
+
+   One of the guiding principles of designing a protocol in the original
+   Internet community was "the protocol is not complete when everything
+   possible has been added, but rather when everything possible has been
+   removed."  Keeping protocols simple is important for many different
+   reasons, including:
+
+   o  Separating failure domains.  If each protocol serves a single
+      purpose, a failure of that particular function can be easily
+      traced to a single protocol.  Failures in a single protocol will
+      not impact the operation of other parts of the system.
+
+   o  Increasing observability.  If each protocol transports a single
+      type of traffic, network operators can easily observe and manage
+      each kind of traffic independently.  Operators can route different
+      kinds of traffic along different paths, match the quality of
+      service with application requirements, and more quickly find
+      correlations between application problems and network conditions.
+
+   o  Increasing security.  It is easier to understand the attack
+      surface of protocols used for a single purpose, and hence to
+      protect these protocols.  Implementations of single-purpose
+      protocols also tend to have fewer lines of code, fewer internal
+      interaction surfaces, etc.--they tend to be simpler, and easier to
+      verify for completeness and correctness.
+
+   o  Increasing scale.  Simplicity scales, complexity fails.  Single-
+      purpose protocols are generally simpler.
+
+   o  Separating complexity from complexity.  While deploying one
+      protocol for each purpose increases global complexity, it reduces
+      the complexity of each deployed protocol (local complexity is
+      reduced).  The early Internet tended to lean towards local
+      simplicity and global complexity.
+
+   In the more recent years, however, the Internet community has tended
+   to favor global simplicity over local simplicity, using a small set
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 2]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   of protocols for "almost everything."  These "kitchen sink" protocols
+   tend to be extremely complex.  Implementations of these protocols run
+   into hundreds of thousands of lines of code, separated into many
+   independent, interacting modules.
+
+1.1.  Contributors
+
+   The following people contributed to this draft: ...
+
+1.2.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+2.  Observations on the Narrowing of Protocols
+
+   While the Internet remains richly populated with protocols at the
+   moment, the trend is towards using three protocols for "everything."
+   The community is designing few new protocols, choosing to adapt
+   existing protocols for new use cases rather than designing a new
+   protocol.  Three specific instances are noted here, leading to the
+   title given to this draft, "the internet of three protocols."  These
+   protocols are HTTPS, DNS, and BGP.
+
+2.1.  HTTPS
+
+   Originally, each type of data or application was paired with a
+   protocol designed for that purpose.  For instance:
+
+   o  TELNET/SSH for carrying console and control text data between two
+      hosts
+
+   o  SMTP for carrying email, later extended to carry attachments,
+      between hosts
+
+   o  FTP/SFTP for carrying files between hosts
+
+   o  HTTP/HTTPS for carrying HTML formatted files between hosts; later
+      extended to carry scripts, images, video, etc.
+
+   o  DNS for carrying domain requests between hosts and recursive/
+      caching DNS servers
+
+   o  ... need more examples here ...
+
+   HTTPS has encroached on all of these protocols, and the traffic types
+   and purposes described are increasingly being pulled into HTTPS
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 3]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   streams.  SMTP and DNS are notable examples of this phenomena, where
+   most email is now handled through web interfaces, and DoH is largely
+   taking over communications between hosts and DNS servers.
+
+2.2.  DNS
+
+   DNS has not so much replaced other protocols as it has been extended
+   to support many different complex use cases, many of which may have
+   been better solved with some new protocol.
+
+2.3.  BGP
+
+   BGP was originally designed to interconnect multiple routing domains,
+   where each domain is an independently operating network with their
+   own policies, operations staff, business goals, etc.  In other words,
+   BGP was designed to build internetworks out of networks.  As such,
+   BGP was designed as an overlay, providing edge-to-edge reachability
+   for external routing information; a provider would not normally carry
+   internal infrastructure routes in BGP.  Over time, BGP was extended
+   to carry virtual topologies and traffic engineering/steering
+   information, allowing operators to build tunneled overlay topologies
+   across their network at scale.
+
+   BGP has been (and is currently being) extended in two specific ways:
+   to enable BGP's use as an IGP carrying infrastructure reachability,
+   and to use BGP as a general solution to deploying virtual overlay
+   networks.  For instance:
+
+   o  Autodiscovery of BGP peers and using link local peering to reduce
+      the configuration of BGP in a data center fabric
+
+   o  Carrying link state information in BGP (and calculating loop-free
+      paths using link-state methods)
+
+   o  Carrying layer 2 reachability information, including load
+      balancing, broadcast and unknowns, etc., for data center fabrics
+
+   o  ... need more examples here ...
+
+   Each extension to BGP increases the protocol's complexity, increasing
+   the size of the code base, the protocol's attack surface, and the
+   ways in which a protocol misconfiguration can impact operations.  For
+   instance:
+
+   o  Autodiscovering and configuration of peers is desirable in data
+      center fabrics, and undesirable in interdomain routing
+
+
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 4]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   o  The average BGP implementation is well over 200,000 lines of code,
+      precluding any single individual's ability to understand and work
+      on the entire code base
+
+   o  ... need more examples here ... this might be too mixed of a list?
+
+3.  Observations on the Reasons for this Narrowing
+
+   This section considers a few (not necessarily all) reasons believed
+   to increase the reliance on a smaller set of protocols, rather than
+   the design and deployment of new protocols.
+
+3.1.  Increasing Complexity
+
+   As each protocol becomes more complex, it forms a community.  This
+   community, in turn, tends to see the solution to every possible
+   problem in terms of the protocol the community shares expertise in.
+   The protocol becomes a kind of "set of glasses" through which all
+   problems are viewed; alternatives to using the "community's protocol"
+   are not sought out.  Much like a social network, if the community
+   around a protocol becomes large enough, it will "consume" the time,
+   energy, and expertise once spread across multiple protocols.  As the
+   protocol is used to solve more problems, the community gains deeper
+   experience and knowledge, forming a self-reinforcing loop around
+   increasing complexity, more deeply defined community boundaries, and
+   deeper expertise.
+
+3.2.  Difficulty of Deploying New Protocols
+
+   Developing a new protocol requires many years of work; ten years is
+   not an unreasonable amount of time to move a protocol from inception
+   to initial deployment.  Once a protocol has been developed, deploying
+   the new protocol takes a long period of time.  For instance, IPv6 was
+   first available in the Linux kernel in 1996.  As of this writing,
+   IPv6 deplooyment has been actively encouraged for 26 years; less than
+   50% of all networks are actively running IPv6; and there are no known
+   IPv6-only networks active.
+
+   Long development and deployment times encourage the use of existing
+   protocols, where possible, to modify existing protocols.  Problems
+   need to be solved now, but protocol development and deployment can
+   take years.
+
+3.3.  Increasing Internet Centralization
+
+   The origins of the Internet were strongly decentralized; there were
+   many sources, many destinations, and lots of broad interconnection.
+   The current Internet is more centralized, with high percentages of
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 5]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   traffic sourced from and destined to a few services.  These services,
+   in turn, pull large amounts of traffic off the "Internet proper,"
+   carrying it on private networks from the edge directly into the
+   service.
+
+   These centralized services do not need, necessarily, to interoperate
+   in the same way many different decentralized services to be
+   effective.  This tendency towards centralization, then, tends to draw
+   protocol development into a narrower focus of solving problems for
+   the larger services, and away from interoperation and broader-based
+   efforts.  Further, the growing centralization tends to gather
+   information on protocol performance into private domains, reducing
+   the amount of information protocol developers have to work from.
+   Finally, this growing centralization tends to gather protocol
+   expertise into small, strongly controlled communities.
+
+3.4.  Balance of Global versus Local Optimization
+
+   As networks have become more complex, network operators have sought
+   out ways to reduce that complexity to a more managable level.  One
+   way network operators have attempted to manage complexity is to
+   reduce the number of protocols they are deploying and managing.  The
+   protocol development community has often followed the desire for
+   "simplicity through protocol reduction" by solving problems in
+   existing protocols, rather than creating new protocols.
+
+   Driven to its extreme, it would seem this line of reasoning argues
+   for a single protocol to solve "everything," including routing,
+   naming, transport, etc.  Tradeoffs are often ignored in the push
+   towards a smaller number of protocols, however.  To build scalable,
+   flexible, systems, local and global complexity must be seen as a set
+   of tradeoffs.  Proper system design requires breaking complex
+   problems down into a series of smaller, interacting problems, and
+   building solutions for each problem.  These solutions should be
+   connected using clearly udnerstandable, shallow, and narrow
+   interaction surfaces.
+
+4.  Observations on the Results of this Narrowing
+
+   This draft does not claim extending protocols is bad (or unwise) in
+   each individual case.  The community should, however, be concerned
+   about the impact of these extensions taking place at the expense of
+   developing and deploying protocols for solving individual problems.
+   Some of the reasons the community should be concerned are discussed
+   in this section.
+
+   Increasing protocol complexity drives larger failure domains and
+   attack surfaces, not only for the highly complex protocol, but also
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 6]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   for the system in which the protocol is embedded.  This is true even
+   if every feature of a given protocol is not used; unused features
+   still exist in the implementations deployed in the network.
+
+   Extremely complex protocols require hundreds of thousands of lines of
+   code spread across many sub-modules to implement.  These large
+   implementions tend to require communities of developers; no-one in
+   these communities tend to know "the entire code base."  This
+   exaberates the problems of larger failure domains and attack surfaces
+   discussed above.
+
+   Increasing protocol complexity encouarges Internet centralization.
+   As protocols become more complex, the set of engineers and/or
+   operators who understand these protocols at the level required to
+   deploy them at scale contracts.  This smaller pool of engineers will
+   tend to concentrate in a few larger organizations for two reasons:
+   larger organizations have the resources to pay for and support deep
+   talent, and engineers (like most all other people) tend to like
+   working with like-minded people.
+
+5.  Recommendations for the Internet Community
+
+   The immediate way to express recommendations resulting from these
+   observations is "don't create complex protocols," or "use multiple
+   protocols to solve multiple problems."  Any such recommendation,
+   however, is context and perception dependent.  Instead, what is
+   needed is concrete steps to encourage the Internet community to both
+   understand the problems resulting from using a small set of protocols
+   to address all use cases or problems, and to allow groups who manage
+   the development of protocols to control the protocol's complexity.
+   Several suggestions are made towards these ends.
+
+5.1.  Encourage Research into Protocol Development and Deployment
+
+   One way to encourage a broader set of protocols is encouraging
+   research into why and how protocols require long periods of time to
+   deploy.  This may lead to some changes in the requirements for
+   backward compatibility, for instance, or changing basic rules of
+   protocol implementation (reference use it or lose it work here?).
+   Clearly defined differentation between protocols requiring hardware
+   changes and software-only changes need to be considered.
+
+   A second step might be encouraging a stronger ecosystem around
+   developing and deploying experimental protocols.  The largest risk to
+   deploying an experimental protocol is the protocol may eventually be
+   withdrawn from use, or fail to gain enough traction to receive
+   continued community support.  Ways of transition "out of"
+
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 7]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   expiremental protocols, while reducing these risks, should be
+   explored.
+
+5.2.  Encourage Defined Protocol Scope
+
+   The Internet community can be encouraged to place clear "caps" or
+   "boundaries" on each protocol.  Specifically, when an IETF working
+   group begins developing (or extending) a protocol, specific bounds on
+   the protocol can be written into the working group charter.  Any
+   extension of these bounds must be discussed and approved by the
+   larger community, and in particular those who hold technical
+   leadership and have a larger architectural view, before changes are
+   undertaken.
+
+   A bound may be on the scope of the protocol, such as "designed to be
+   deployed within one administration domain, region, etc."  This is the
+   concept of "local deployment," with the caveat that "local
+   deployment" needs to be better defined and enforced in meaninful
+   ways.
+
+   A bound may be on the set of problems the protocol is designed to
+   solve.  In many cases, a protocol will be developed to solve one
+   problem.  Extensions are then added to support more use cases, then a
+   similar problem is observed in a different scope, and the protocol is
+   extended to support the added scope.  Thus the protocol "grows" via
+   "walking," taking on new functionality to support new use cases
+   within a given scope, then taking on new functionality to support new
+   scopes with similar problems.  There are no natural boundaries on
+   this kind of protocol extension.
+
+   For instance, BGP was originally designed to support routing between
+   networks in different administration domains (interdomain routing),
+   particularly to carry "non-infrastructure" routing information within
+   and between networks.  Creating virtual topologies was eventually
+   identified as one problem that needed to be solved in this space, so
+   BGP was extended to support the creation and management of overlays.
+   When virtualization became widely used on data center fabrics,
+   protocol developers noticed that the overlay management problems in
+   interdomain routing were similar to the overlay management problems
+   in data fabrics, so BGP was extended to support virtual topologies in
+   data centers.  There is no apparent limit on the extensions that can
+   be added to BGP to support virtually any routing problem.
+
+   The result is a protocol requiring hundreds of thousands of lines of
+   code to implement, and which must be configured and managed in
+   completely different ways in different environments.  Saying "I
+   understand BGP" is currently an almost meaningless statement because
+   BGP has so many features, and is deployed in so many different
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 8]
+
+Internet-Draft              Abbreviated Title                 March 2022
+
+
+   situations, that very few people can understand every feature, how
+   each one is used, and how to optimally use each one.
+
+6.  References
+
+6.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+6.2.  Informative References
+
+   [I-D.narten-iana-considerations-rfc2434bis]
+              Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", draft-narten-iana-
+              considerations-rfc2434bis-09 (work in progress), March
+              2008.
+
+   [RFC2629]  Rose, M., "Writing I-Ds and RFCs using XML", RFC 2629,
+              DOI 10.17487/RFC2629, June 1999,
+              <https://www.rfc-editor.org/info/rfc2629>.
+
+   [RFC3552]  Rescorla, E. and B. Korver, "Guidelines for Writing RFC
+              Text on Security Considerations", BCP 72, RFC 3552,
+              DOI 10.17487/RFC3552, July 2003,
+              <https://www.rfc-editor.org/info/rfc3552>.
+
+Authors' Addresses
+
+   Russ White
+   Juniper Networks
+
+   Email: russ@riw.us
+
+
+   Jared Mauch
+   xxx
+
+   Email: xxx
+
+
+
+
+
+
+
+
+
+
+White & Mauch           Expires September 2, 2022               [Page 9]
