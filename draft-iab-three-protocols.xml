@@ -5,7 +5,7 @@
   <!ENTITY I-D.narten-iana-considerations-rfc2434bis SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.narten-iana-considerations-rfc2434bis.xml">
 ]>
 
-<rfc category="info" ipr="trust200902" docName="draft-iab-three-protocols.txt">
+<rfc category="info" ipr="trust200902" docName="draft-iab-three-protocols-00">
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
